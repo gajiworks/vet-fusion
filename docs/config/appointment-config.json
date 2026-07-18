@@ -1,0 +1,4 @@
+{
+  "staticFormsEndpoint": "https://api.staticforms.dev/submit",
+  "apiKey": "__STATIC_FORMS_API_KEY__"
+}

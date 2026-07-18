@@ -1,0 +1,218 @@
+{
+  "seo": {
+    "title": "VetFusion Animal Clinic SJDM | Veterinary Care in San Jose del Monte",
+    "description": "VetFusion Animal Clinic SJDM Branch provides veterinary checkups, diagnostics, surgery inquiries, grooming, vaccination inquiries, and urgent call support in San Jose del Monte."
+  },
+  "clinic": {
+    "name": "VetFusion Animal Clinic",
+    "branch": "SJDM Branch",
+    "eyebrow": "VetFusion Animal Clinic - SJDM Branch",
+    "heroTitle": "Complete veterinary care when your pet needs it most",
+    "heroLead": "Routine checkups, diagnostics, surgery, grooming, and urgent veterinary support for pets in San Jose del Monte.",
+    "trustText": "Compassionate care, clear appointment guidance, and a convenient Gaya-Gaya location for local pet owners.",
+    "aboutText": "VetFusion Animal Clinic supports pet owners in San Jose del Monte with practical veterinary guidance, clinic visits, appointment requests, and direct urgent-call support. Contact the clinic for the most current schedule and service availability.",
+    "trustItems": [
+      "Compassionate veterinary care",
+      "Urgent support available",
+      "Convenient Gaya-Gaya location"
+    ],
+    "phone": "0966 085 1536",
+    "phoneLink": "tel:+639660851536",
+    "email": "vetfusionanimalclinic@gmail.com",
+    "messengerUrl": "https://www.facebook.com/vetfusionanimalclinic.gayagaya",
+    "facebookUrl": "https://www.facebook.com/vetfusionanimalclinic.gayagaya",
+    "address": "VetFusion Animal Clinic, Gov. F. Halili St., Brgy. Gaya-Gaya, San Jose del Monte, Bulacan 3022",
+    "mapsUrl": "https://maps.app.goo.gl/aRseSLiS683AXuqW6",
+    "mapsEmbedUrl": "https://maps.google.com/maps?q=VetFusion%20Animal%20Clinic%20Gov.%20F.%20Halili%20St.%20Brgy.%20Gaya-Gaya%20San%20Jose%20del%20Monte%20Bulacan%203022&z=16&output=embed",
+    "hoursLabel": "Call clinic for current hours"
+  },
+  "images": {
+    "logo": "images/vetfusion-logo.png",
+    "hero": "images/vetfusion-hero.webp",
+    "consultation": "images/vetfusion-consultation.webp",
+    "diagnostics": "images/vetfusion-diagnostics.webp",
+    "grooming": "images/vetfusion-grooming.webp"
+  },
+  "navigation": [
+    { "label": "Home", "href": "#home" },
+    { "label": "Services", "href": "#services" },
+    { "label": "Clinic Updates", "href": "#updates" },
+    { "label": "About", "href": "#about" },
+    { "label": "Gallery", "href": "#gallery" },
+    { "label": "Contact", "href": "#contact" }
+  ],
+  "announcements": [
+    {
+      "id": "urgent-call-guidance",
+      "title": "Call before urgent visits",
+      "shortDescription": "For urgent concerns, call the clinic directly so the team can guide you before arrival.",
+      "fullDescription": "For urgent concerns, please call 0966 085 1536 directly. Website messages and appointment requests may not be reviewed immediately, so direct calling is the clearest path for time-sensitive concerns.",
+      "category": "Emergency",
+      "publishDate": "Clinic Advisory",
+      "effectiveDate": "",
+      "expiryDate": "",
+      "priority": 5,
+      "isPinned": true,
+      "imagePath": "images/vetfusion-diagnostics.webp",
+      "imageAlt": "Veterinary team using diagnostic equipment with a calm dog",
+      "actionText": "Call Clinic",
+      "actionUrl": "tel:+639660851536"
+    },
+    {
+      "id": "appointment-reminder",
+      "title": "Appointment requests need clinic confirmation",
+      "shortDescription": "Online requests help the clinic review your preferred schedule but do not automatically confirm the visit.",
+      "fullDescription": "Submit your preferred date, time, pet details, and concern through the appointment form. The clinic will contact you to confirm the final schedule and service availability.",
+      "category": "Schedule",
+      "publishDate": "Appointment Note",
+      "effectiveDate": "",
+      "expiryDate": "",
+      "priority": 3,
+      "isPinned": false,
+      "imagePath": "images/vetfusion-consultation.webp",
+      "imageAlt": "Veterinarian checking an orange cat during a consultation",
+      "actionText": "Request Appointment",
+      "actionUrl": "#appointment"
+    },
+    {
+      "id": "vaccination-inquiry",
+      "title": "Ask about vaccination availability",
+      "shortDescription": "Pet owners may contact the clinic to ask about current vaccine availability and appointment slots.",
+      "fullDescription": "For vaccination inquiries, call or send an appointment request with your pet details. The clinic can guide you on availability and the next appointment step.",
+      "category": "Vaccination",
+      "publishDate": "Pet Wellness",
+      "effectiveDate": "",
+      "expiryDate": "",
+      "priority": 2,
+      "isPinned": false,
+      "imagePath": "images/vetfusion-diagnostics.webp",
+      "imageAlt": "Veterinary team using diagnostic equipment with a calm dog",
+      "actionText": "Contact Clinic",
+      "actionUrl": "#contact"
+    },
+    {
+      "id": "grooming-availability",
+      "title": "Grooming schedule inquiries",
+      "shortDescription": "Contact the clinic to confirm current grooming availability and preferred schedule options.",
+      "fullDescription": "Grooming availability can vary by schedule. Use the appointment form or contact the clinic directly to ask for the latest slots.",
+      "category": "Advisory",
+      "publishDate": "Grooming",
+      "effectiveDate": "",
+      "expiryDate": "",
+      "priority": 1,
+      "isPinned": false,
+      "imagePath": "images/vetfusion-grooming.webp",
+      "imageAlt": "Small dog receiving gentle grooming in a clean clinic grooming area",
+      "actionText": "Request Appointment",
+      "actionUrl": "#appointment"
+    }
+  ],
+  "services": [
+    {
+      "title": "Emergency and Urgent Care",
+      "description": "Direct-call guidance for urgent pet concerns and next steps before arrival.",
+      "icon": "emergency",
+      "category": "Emergency"
+    },
+    {
+      "title": "Routine Checkups",
+      "description": "General pet health visits, record review, and practical care guidance.",
+      "icon": "checkup",
+      "category": "Routine"
+    },
+    {
+      "title": "Vaccination",
+      "description": "Contact the clinic to ask about vaccine availability and appointment timing.",
+      "icon": "vaccine",
+      "category": "Routine"
+    },
+    {
+      "title": "Surgery",
+      "description": "Request a consultation so the clinic can assess your pet and discuss appropriate care.",
+      "icon": "surgery",
+      "category": "Medical"
+    },
+    {
+      "title": "Laboratory and Diagnostics",
+      "description": "Diagnostic inquiries and clinic evaluation for pets needing closer assessment.",
+      "icon": "diagnostics",
+      "category": "Medical"
+    },
+    {
+      "title": "Confinement",
+      "description": "Call or request guidance when your pet may need closer clinic observation.",
+      "icon": "services",
+      "category": "Medical"
+    },
+    {
+      "title": "Dental Care",
+      "description": "Ask the clinic about dental concerns, checks, and service availability.",
+      "icon": "dental",
+      "category": "Routine"
+    },
+    {
+      "title": "Grooming",
+      "description": "Request grooming availability and schedule guidance for your pet.",
+      "icon": "grooming",
+      "category": "Grooming"
+    }
+  ],
+  "reasons": [
+    {
+      "title": "Compassionate Pet Care",
+      "description": "A calm clinic experience for owners who want clear guidance.",
+      "icon": "check"
+    },
+    {
+      "title": "Clear Appointment Guidance",
+      "description": "Requests are reviewed before the final schedule is confirmed.",
+      "icon": "calendar"
+    },
+    {
+      "title": "Emergency Support",
+      "description": "Urgent concerns are routed to direct phone contact.",
+      "icon": "phone"
+    },
+    {
+      "title": "Convenient Local Clinic",
+      "description": "Located in Gaya-Gaya, San Jose del Monte, Bulacan.",
+      "icon": "map"
+    }
+  ],
+  "appointmentOptions": [
+    "Routine Checkup",
+    "Emergency Concern",
+    "Surgical Consultation",
+    "Vaccination Inquiry",
+    "Diagnostics Inquiry",
+    "Dental Care Inquiry",
+    "Grooming Availability",
+    "Other Veterinary Service"
+  ],
+  "galleryItems": [
+    {
+      "title": "Veterinary Care",
+      "description": "Pet Care",
+      "image": "images/vetfusion-hero.webp",
+      "alt": "Filipino veterinarian with a golden retriever and orange cat in a modern clinic"
+    },
+    {
+      "title": "Consultation",
+      "description": "Consultation",
+      "image": "images/vetfusion-consultation.webp",
+      "alt": "Veterinarian examining an orange cat while the owner watches"
+    },
+    {
+      "title": "Diagnostics",
+      "description": "Diagnostics",
+      "image": "images/vetfusion-diagnostics.webp",
+      "alt": "Veterinary team using diagnostic equipment with a calm dog"
+    },
+    {
+      "title": "Grooming",
+      "description": "Grooming",
+      "image": "images/vetfusion-grooming.webp",
+      "alt": "Happy small dog receiving gentle grooming"
+    }
+  ]
+}

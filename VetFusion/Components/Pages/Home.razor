@@ -1,0 +1,631 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+@using System.Text.Json
+@inject IJSRuntime JS
+@inject IWebHostEnvironment Env
+
+<PageTitle>@Content.Seo.Title</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@Content.Seo.Description" />
+    <meta property="og:title" content="@Content.Seo.Title" />
+    <meta property="og:description" content="@Content.Seo.Description" />
+    <meta property="og:image" content="@Content.Images.Hero" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@Content.Seo.Title" />
+    <meta name="twitter:description" content="@Content.Seo.Description" />
+    <link rel="preload" as="image" href="@Content.Images.Hero" />
+    <script type="application/ld+json">@((MarkupString)StructuredData)</script>
+</HeadContent>
+
+<div class="site-shell">
+    <div class="header-strip">
+        <span>Animal Clinic &amp; Pet Grooming in San Jose del Monte</span>
+    </div>
+
+    <header class="site-header" data-site-header>
+        <div class="container nav-shell">
+            <a class="brand" href="#home" aria-label="@Content.Clinic.Name home">
+                <img src="@Content.Images.Logo" alt="@Content.Clinic.Name @Content.Clinic.Branch logo" width="64" height="64" />
+                <span>
+                    <strong>VetFusion</strong>
+                    <small>Animal Clinic and Pet Grooming</small>
+                </span>
+            </a>
+
+            <button class="menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false" aria-controls="primary-navigation">
+                <span></span><span></span><span></span>
+            </button>
+
+            <nav class="primary-nav" id="primary-navigation" data-primary-nav aria-label="Primary navigation">
+                <a class="nav-button nav-button--message" href="@Content.Clinic.MessengerUrl" target="_blank" rel="noopener">@((MarkupString)Icon("message"))<span>Message</span></a>
+                <a class="nav-button nav-button--call" href="@Content.Clinic.PhoneLink">@((MarkupString)Icon("phone"))<span>Call Us</span></a>
+                <a class="nav-button nav-button--directions" href="@Content.Clinic.MapsUrl" target="_blank" rel="noopener">@((MarkupString)Icon("map"))<span>Directions</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="hero section-band" id="home">
+            <div class="container hero-grid">
+                <div class="hero-copy">
+                    <p class="hero-badge">@((MarkupString)Icon("map"))<span>@Content.Clinic.Eyebrow</span></p>
+                    <h1>
+                        <span>Complete veterinary care</span>
+                        <span class="hero-script">when your pet needs it most.</span>
+                    </h1>
+                    <p class="hero-lead">@Content.Clinic.HeroLead</p>
+                    <div class="hero-actions">
+                        <a class="button" href="#appointment">@((MarkupString)Icon("calendar"))<span>Book an Appointment</span></a>
+                        <button class="button button--secondary" type="button" data-emergency-open>@((MarkupString)Icon("phone"))<span>Call Us</span></button>
+                    </div>
+                </div>
+                <figure class="hero-media">
+                    <img src="@Content.Images.Hero" alt="Filipino veterinarian with a golden retriever and orange cat in a modern blue and white clinic" width="1600" height="900" fetchpriority="high" />
+                </figure>
+                <ul class="trust-row" aria-label="Clinic highlights">
+                    @foreach (var item in Content.Clinic.TrustItems)
+                    {
+                        <li>@((MarkupString)Icon("check"))<span>@item</span></li>
+                    }
+                </ul>
+                <div class="hero-stats" aria-label="Clinic quick details">
+                    <span>@((MarkupString)Icon("paw"))<strong>Pet Care</strong><small>Checkups, grooming, and urgent guidance</small></span>
+                    <span>@((MarkupString)Icon("shield"))<strong>Reliable Support</strong><small>Appointment requests with clinic confirmation</small></span>
+                    <span>@((MarkupString)Icon("users"))<strong>Experienced Team</strong><small>Veterinary professionals ready to help</small></span>
+                    <span>@((MarkupString)Icon("clock"))<strong>Clinic Hours</strong><small>@Content.Clinic.HoursLabel</small></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section--soft" id="services" aria-labelledby="services-title">
+            <div class="container">
+                <div class="section-heading section-heading--split">
+                    <div>
+                        <p class="eyebrow">Services</p>
+                        <h2 id="services-title">Veterinary care made easier to request</h2>
+                    </div>
+                </div>
+                <div class="service-grid" id="services-list">
+                    @foreach (var service in VisibleServices)
+                    {
+                        <button class="service-card @(service.Category == "Emergency" ? "service-card--emergency" : null)" type="button" @onclick="() => OpenServiceModal(service)">
+                            <span class="icon-badge" aria-hidden="true">@((MarkupString)Icon(service.Icon))</span>
+                            <h3>@service.Title</h3>
+                            <p>@service.Description</p>
+                            <span class="card-arrow" aria-hidden="true">@((MarkupString)Icon("next"))</span>
+                        </button>
+                    }
+                </div>
+                @if (Content.Services.Count > InitialServiceCount)
+                {
+                    <button class="button button--secondary section-toggle" type="button" aria-expanded="@servicesExpanded.ToString().ToLowerInvariant()" aria-controls="services-list" @onclick="ToggleServices">
+                        @((MarkupString)Icon(servicesExpanded ? "top" : "next"))<span>@(servicesExpanded ? "Show Less" : "Show More")</span>
+                    </button>
+                }
+            </div>
+        </section>
+
+        <section class="section" id="updates" aria-labelledby="updates-title">
+            <div class="container">
+                <div class="section-heading section-heading--split">
+                    <div>
+                        <p class="eyebrow">Clinic Updates</p>
+                        <h2 id="updates-title">Announcement board</h2>
+                    </div>
+                </div>
+
+                @if (PinnedAnnouncement is not null)
+                {
+                    <button class="featured-announcement @(PinnedAnnouncement.CategoryClass)" type="button" @onclick="() => OpenAnnouncementModal(PinnedAnnouncement)">
+                        <div>
+                            <span class="category-badge">@PinnedAnnouncement.Category</span>
+                            <h3>@PinnedAnnouncement.Title</h3>
+                            <p>@PinnedAnnouncement.ShortDescription</p>
+                            <dl class="date-list">
+                                <div><dt>Published</dt><dd>@PinnedAnnouncement.PublishDate</dd></div>
+                                @if (!string.IsNullOrWhiteSpace(PinnedAnnouncement.EffectiveDate))
+                                {
+                                    <div><dt>Effective</dt><dd>@PinnedAnnouncement.EffectiveDate</dd></div>
+                                }
+                            </dl>
+                            <span class="card-arrow featured-arrow" aria-hidden="true">@((MarkupString)Icon("next"))</span>
+                        </div>
+                        <img src="@PinnedAnnouncement.ImagePath" alt="@PinnedAnnouncement.ImageAlt" width="900" height="506" loading="lazy" />
+                    </button>
+                }
+
+                <div class="announcement-grid">
+                    @foreach (var announcement in VisibleAnnouncements)
+                    {
+                        <button class="announcement-card @(announcement.CategoryClass)" type="button" @onclick="() => OpenAnnouncementModal(announcement)">
+                            <span class="category-badge">@announcement.Category</span>
+                            <time>@announcement.PublishDate</time>
+                            <h3>@announcement.Title</h3>
+                            <p>@announcement.ShortDescription</p>
+                            <span class="card-arrow" aria-hidden="true">@((MarkupString)Icon("next"))</span>
+                        </button>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section class="section section--soft" id="about">
+            <div class="container split-layout about-layout">
+                <div class="about-label">
+                    <p class="eyebrow">About VetFusion</p>
+                </div>
+                <figure class="section-photo">
+                    <img src="@Content.Images.Consultation" alt="Veterinarian gently checking an orange cat while the owner watches" width="1600" height="900" loading="lazy" />
+                </figure>
+                <div class="about-copy">
+                    <h2>Compassionate veterinary care for every stage of your pet's life</h2>
+                    <p>@Content.Clinic.AboutText</p>
+                    <div class="trust-card-grid">
+                        @foreach (var reason in Content.Reasons)
+                        {
+                            <article class="trust-card">
+                                <span class="icon-badge" aria-hidden="true">@((MarkupString)Icon(reason.Icon))</span>
+                                <h3>@reason.Title</h3>
+                                <p>@reason.Description</p>
+                            </article>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="gallery" aria-labelledby="gallery-title">
+            <div class="container">
+                <div class="section-heading section-heading--split">
+                    <div>
+                        <p class="eyebrow">Gallery</p>
+                        <h2 id="gallery-title">A calmer look at clinic care</h2>
+                    </div>
+                </div>
+                <div class="gallery-grid" data-gallery>
+                    @for (var i = 0; i < Content.GalleryItems.Count; i++)
+                    {
+                        var item = Content.GalleryItems[i];
+                        <button class="gallery-item" type="button" data-gallery-index="@i" aria-label="View @item.Title">
+                            <img src="@item.Image" alt="@item.Alt" width="900" height="506" loading="lazy" />
+                            <span><small>@item.Description</small><strong>@item.Title</strong></span>
+                        </button>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section class="section section--navy" id="appointment">
+            <div class="container appointment-layout appointment-layout--compact">
+                <div class="appointment-intro">
+                    <p class="eyebrow">Appointment Request</p>
+                    <h2>Request an Appointment</h2>
+                    <p>Send your preferred schedule and visit details. The clinic will contact you to confirm your appointment.</p>
+                    <p class="emergency-note">@((MarkupString)Icon("phone"))<span>For urgent concerns, call the clinic directly instead of waiting for appointment confirmation. <a href="@Content.Clinic.PhoneLink">Call Us</a></span></p>
+                </div>
+                <form class="appointment-form" id="appointment-form" action="https://api.staticforms.dev/submit" method="post" novalidate>
+                    <input type="hidden" name="apiKey" value="__STATIC_FORMS_API_KEY__" />
+                    <input type="hidden" name="subject" value="VetFusion appointment request" />
+                    <input type="text" name="honeypot" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+                    <label class="form-field full" for="ownerName">
+                        <span>Owner name</span>
+                        <input id="ownerName" name="name" required autocomplete="name" />
+                    </label>
+                    <label class="form-field" for="mobileNumber">
+                        <span>Mobile number</span>
+                        <input id="mobileNumber" name="phone" type="tel" required autocomplete="tel" pattern="^(\+?63|0)?9\d{9}$" />
+                    </label>
+                    <label class="form-field" for="emailAddress">
+                        <span>Email <small>optional</small></span>
+                        <input id="emailAddress" name="email" type="email" autocomplete="email" />
+                    </label>
+                    <label class="form-field" for="petName">
+                        <span>Pet name</span>
+                        <input id="petName" name="petName" required autocomplete="off" />
+                    </label>
+                    <label class="form-field" for="petType">
+                        <span>Pet type</span>
+                        <input id="petType" name="petType" required placeholder="Dog, cat, or other" />
+                    </label>
+                    <label class="form-field full" for="service">
+                        <span>Requested service</span>
+                        <select id="service" name="service" required>
+                            <option value="">Select service</option>
+                            @foreach (var option in Content.AppointmentOptions)
+                            {
+                                <option>@option</option>
+                            }
+                        </select>
+                    </label>
+                    <label class="form-field" for="preferredDate">
+                        <span>Preferred date</span>
+                        <input id="preferredDate" name="preferredDate" type="date" required />
+                    </label>
+                    <label class="form-field" for="preferredTime">
+                        <span>Preferred time</span>
+                        <input id="preferredTime" name="preferredTime" type="time" required />
+                    </label>
+                    <label class="form-field full" for="message">
+                        <span>Message or concern</span>
+                        <textarea id="message" name="message" rows="4" required></textarea>
+                    </label>
+                    <p class="form-status full" id="form-status" role="status" aria-live="polite"></p>
+                    <div class="form-actions full">
+                        <button class="button" type="submit">@((MarkupString)Icon("calendar"))<span>Submit Request</span></button>
+                    </div>
+                    <small class="form-note full">Submitting this form is an appointment request and does not automatically confirm a schedule.</small>
+                </form>
+            </div>
+        </section>
+
+        <section class="section" id="contact">
+            <div class="container contact-layout">
+                <div class="contact-panel">
+                    <p class="eyebrow">Contact and Location</p>
+                    <h2>Visit @Content.Clinic.Name</h2>
+                    <address class="contact-details">
+                        <span>@((MarkupString)Icon("phone"))<small>Phone</small><a href="@Content.Clinic.PhoneLink">@Content.Clinic.Phone</a><button type="button" data-copy-value="@Content.Clinic.Phone" aria-label="Copy phone">@((MarkupString)Icon("copy"))</button></span>
+                        <span>@((MarkupString)Icon("message"))<small>Email</small><a href="mailto:@Content.Clinic.Email">@Content.Clinic.Email</a></span>
+                        <span>@((MarkupString)Icon("calendar"))<small>Operating Hours</small><strong>@Content.Clinic.HoursLabel</strong></span>
+                        <span>@((MarkupString)Icon("map"))<small>Address</small><strong>@Content.Clinic.Address</strong><button type="button" data-copy-value="@Content.Clinic.Address" aria-label="Copy address">@((MarkupString)Icon("copy"))</button></span>
+                    </address>
+                    <div class="contact-actions">
+                        <a class="button" href="@Content.Clinic.PhoneLink">@((MarkupString)Icon("phone"))<span>Call Us</span></a>
+                        <a class="button button--secondary" href="@Content.Clinic.MapsUrl" target="_blank" rel="noopener">@((MarkupString)Icon("map"))<span>Get Directions</span></a>
+                        <a class="button button--secondary" href="mailto:@Content.Clinic.Email">@((MarkupString)Icon("message"))<span>Send Email</span></a>
+                    </div>
+                    <p class="copy-status" data-copy-status role="status" aria-live="polite"></p>
+                    <div class="map-card">
+                        <iframe src="@Content.Clinic.MapsEmbedUrl" title="Google map for VetFusion Animal Clinic SJDM Branch" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <a class="map-card__link" href="@Content.Clinic.MapsUrl" target="_blank" rel="noopener">@((MarkupString)Icon("map"))<span>Open in Google Maps</span></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="floating-contact-dock" aria-label="Quick contact actions">
+        <a href="@Content.Clinic.PhoneLink" aria-label="Call clinic" data-tooltip="Call">@((MarkupString)Icon("phone"))</a>
+        <a href="@Content.Clinic.MessengerUrl" aria-label="Open Messenger" data-tooltip="Messenger">@((MarkupString)Icon("message"))</a>
+        <a href="@Content.Clinic.MapsUrl" target="_blank" rel="noopener" aria-label="Get directions" data-tooltip="Directions">@((MarkupString)Icon("map"))</a>
+        <a href="#home" aria-label="Back to top" data-tooltip="Back to Top" data-back-top>@((MarkupString)Icon("top"))</a>
+    </nav>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img src="@Content.Images.Logo" alt="@Content.Clinic.Name @Content.Clinic.Branch logo" width="72" height="72" loading="lazy" />
+                <h2>VetFusion Animal Clinic</h2>
+            </div>
+            <div class="footer-statement-grid">
+                <section>
+                    <h3>Mission</h3>
+                    <p>To provide compassionate, reliable, and high-quality veterinary care that promotes the health, comfort, and well-being of every pet while supporting pet owners with professional guidance and personalized service.</p>
+                </section>
+                <section>
+                    <h3>Vision</h3>
+                    <p>To be one of the most trusted veterinary clinics in San Jose del Monte, Bulacan, recognized for excellence in animal healthcare, innovation, and compassionate service.</p>
+                </section>
+            </div>
+            <section class="footer-legal">
+                <h3>Legal Information</h3>
+                <p>The information provided on this website is for general informational purposes only and does not replace professional veterinary consultation, diagnosis, or treatment. Medical advice and treatment recommendations may vary depending on your pet's condition. Appointment requests submitted through this website are subject to clinic confirmation and availability.</p>
+            </section>
+        </div>
+        <div class="container footer-bottom">
+            <span>&copy; 2026 VetFusion Animal Clinic. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <aside class="emergency-panel" data-emergency-panel aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="emergency-title">
+        <div class="emergency-panel__card">
+            <header>
+                <h2 id="emergency-title">Urgent pet concern?</h2>
+                <button type="button" data-emergency-close aria-label="Close emergency panel">&times;</button>
+            </header>
+            <p>For urgent concerns, please call the clinic directly. Website messages and appointment requests may not be reviewed immediately.</p>
+            <div class="emergency-panel__actions">
+                <a class="button button--emergency" href="@Content.Clinic.PhoneLink">@((MarkupString)Icon("phone"))<span>Call Us</span></a>
+                <a class="button button--secondary" href="@Content.Clinic.MapsUrl" target="_blank" rel="noopener">@((MarkupString)Icon("map"))<span>Get Directions</span></a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="lightbox" data-lightbox aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+        <div class="lightbox__panel">
+            <header>
+                <span data-lightbox-counter>1 / 1</span>
+                <h2 id="lightbox-title" data-lightbox-title>Gallery photo</h2>
+                <button type="button" data-lightbox-close aria-label="Close photo viewer">&times;</button>
+            </header>
+            <button class="lightbox__nav lightbox__nav--prev" type="button" data-lightbox-prev aria-label="Previous photo">@((MarkupString)Icon("prev"))</button>
+            <img src="@Content.GalleryItems.FirstOrDefault()?.Image" alt="" data-lightbox-image />
+            <button class="lightbox__nav lightbox__nav--next" type="button" data-lightbox-next aria-label="Next photo">@((MarkupString)Icon("next"))</button>
+            <p data-lightbox-caption></p>
+        </div>
+    </div>
+
+    @if (SelectedService is not null)
+    {
+        <div class="modal-backdrop" data-modal @onclick="CloseModal">
+            <section class="content-modal content-modal--service" role="dialog" aria-modal="true" aria-labelledby="service-modal-title" @onclick:stopPropagation>
+                <header>
+                    <div>
+                        <span class="modal-kicker">@SelectedService.Category</span>
+                        <h2 id="service-modal-title">@SelectedService.Title</h2>
+                    </div>
+                    <button type="button" aria-label="Close service details" @onclick="CloseModal">&times;</button>
+                </header>
+                <div class="service-modal__body">
+                    <div class="service-modal__icon" aria-hidden="true">@((MarkupString)Icon(SelectedService.Icon))</div>
+                    <div class="service-modal__copy">
+                        <p>@SelectedService.Description</p>
+                        <p class="service-modal__hint">For appointment requests, send your preferred schedule and pet concern. For urgent concerns, call the clinic directly.</p>
+                    </div>
+                </div>
+                <footer>
+                    <a class="button" href="#appointment" @onclick="CloseModal">@((MarkupString)Icon("calendar"))<span>Request Appointment</span></a>
+                    <a class="button button--secondary" href="@Content.Clinic.PhoneLink">@((MarkupString)Icon("phone"))<span>Call Us</span></a>
+                </footer>
+            </section>
+        </div>
+    }
+
+    @if (SelectedAnnouncement is not null)
+    {
+        <div class="modal-backdrop" data-modal @onclick="CloseModal">
+            <section class="content-modal content-modal--announcement" role="dialog" aria-modal="true" aria-labelledby="announcement-modal-title" @onclick:stopPropagation>
+                <header>
+                    <div>
+                        <span class="modal-kicker @(SelectedAnnouncement.Category.Equals("Emergency", StringComparison.OrdinalIgnoreCase) ? "modal-kicker--emergency" : null)">@SelectedAnnouncement.Category</span>
+                        <h2 id="announcement-modal-title">@SelectedAnnouncement.Title</h2>
+                        <small>@SelectedAnnouncement.PublishDate</small>
+                    </div>
+                    <button type="button" aria-label="Close announcement details" @onclick="CloseModal">&times;</button>
+                </header>
+                <div class="content-modal__body">
+                    <img src="@SelectedAnnouncement.ImagePath" alt="@SelectedAnnouncement.ImageAlt" width="900" height="506" loading="lazy" />
+                    <div>
+                        <span class="category-badge">@SelectedAnnouncement.Category</span>
+                        <dl class="date-list">
+                            <div><dt>Published</dt><dd>@SelectedAnnouncement.PublishDate</dd></div>
+                            @if (!string.IsNullOrWhiteSpace(SelectedAnnouncement.EffectiveDate))
+                            {
+                                <div><dt>Effective</dt><dd>@SelectedAnnouncement.EffectiveDate</dd></div>
+                            }
+                        </dl>
+                        <p>@SelectedAnnouncement.FullDescription</p>
+                        @if (SelectedAnnouncement.Category.Equals("Emergency", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <p class="modal-note modal-note--urgent">For urgent concerns, call @Content.Clinic.Phone directly.</p>
+                        }
+                    </div>
+                </div>
+                <footer>
+                    <a class="button button--secondary" href="@SelectedAnnouncement.ActionUrl" @onclick="CloseModal">@((MarkupString)Icon("next"))<span>@SelectedAnnouncement.ActionText</span></a>
+                </footer>
+            </section>
+        </div>
+    }
+</div>
+
+@code {
+    private const int InitialServiceCount = 4;
+    private bool initialized;
+    private bool servicesExpanded;
+    private DotNetObjectReference<Home>? pageReference;
+    private ServiceContent? SelectedService { get; set; }
+    private AnnouncementContent? SelectedAnnouncement { get; set; }
+    private VetFusionContent Content { get; set; } = VetFusionContent.Default;
+
+    private IEnumerable<ServiceContent> VisibleServices => servicesExpanded ? Content.Services : Content.Services.Take(InitialServiceCount);
+    private IEnumerable<AnnouncementContent> ActiveAnnouncements => Content.Announcements
+        .Where(a => !IsExpired(a.ExpiryDate))
+        .OrderByDescending(a => a.IsPinned)
+        .ThenByDescending(a => a.Priority);
+    private AnnouncementContent? PinnedAnnouncement => ActiveAnnouncements.FirstOrDefault(a => a.IsPinned);
+    private IEnumerable<AnnouncementContent> VisibleAnnouncements => ActiveAnnouncements.Where(a => a != PinnedAnnouncement).Take(6);
+
+    private void ToggleServices() => servicesExpanded = !servicesExpanded;
+    private void OpenServiceModal(ServiceContent service) => SelectedService = service;
+    private void OpenAnnouncementModal(AnnouncementContent announcement) => SelectedAnnouncement = announcement;
+    private void CloseModal()
+    {
+        SelectedService = null;
+        SelectedAnnouncement = null;
+    }
+
+    [JSInvokable]
+    public Task CloseActiveModal()
+    {
+        CloseModal();
+        return InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnInitialized()
+    {
+        var path = Path.Combine(Env.WebRootPath, "config", "vetfusion-content.json");
+        if (!File.Exists(path)) return;
+
+        var json = File.ReadAllText(path);
+        Content = JsonSerializer.Deserialize<VetFusionContent>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? VetFusionContent.Default;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            pageReference = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("vetFusionSite.initialize", pageReference, Content.GalleryItems);
+            initialized = true;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (initialized)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("vetFusionSite.dispose");
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+        }
+
+        pageReference?.Dispose();
+    }
+
+    private static bool IsExpired(string? expiryDate)
+    {
+        if (string.IsNullOrWhiteSpace(expiryDate)) return false;
+        return DateTime.TryParse(expiryDate, out var date) && DateTime.Today > date.Date;
+    }
+
+    private string StructuredData => $$"""
+    {
+      "@context": "https://schema.org",
+      "@type": "VeterinaryCare",
+      "name": "{{Content.Clinic.Name}} - {{Content.Clinic.Branch}}",
+      "telephone": "+639660851536",
+      "email": "{{Content.Clinic.Email}}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Gov. F. Halili St., Brgy. Gaya-Gaya",
+        "addressLocality": "San Jose del Monte",
+        "addressRegion": "Bulacan",
+        "postalCode": "3022",
+        "addressCountry": "PH"
+      },
+      "image": "{{Content.Images.Hero}}",
+      "logo": "{{Content.Images.Logo}}",
+      "sameAs": "{{Content.Clinic.FacebookUrl}}"
+    }
+    """;
+
+    private static string Icon(string name) => name switch
+    {
+        "phone" or "emergency" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 3.5 10 7.2 8.4 9.4c1.3 2.6 3.4 4.7 6 6l2.2-1.6 3.9 2.9-.8 3.2c-.2.8-1 1.3-1.8 1.2C10.1 20 4 13.9 2.9 6.1c-.1-.8.4-1.6 1.2-1.8l3-.8Z"/></svg>""",
+        "calendar" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v16H4zM7 2v6M17 2v6M4 10h16"/></svg>""",
+        "map" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a7 7 0 0 0-7 7c0 5.1 7 12 7 12s7-6.9 7-12a7 7 0 0 0-7-7Zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z"/></svg>""",
+        "message" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h16v11H9l-5 4v-15Z"/></svg>""",
+        "check" or "checkup" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>""",
+        "paw" => """<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="10" r="2.3"/><circle cx="11" cy="6.5" r="2.3"/><circle cx="15.5" cy="10" r="2.3"/><circle cx="18.5" cy="14.5" r="2.1"/><path d="M5.5 18.2c.5-3 3.2-5.3 6.3-5.3 3 0 5.8 2.3 6.3 5.3.2 1.3-.8 2.3-2.1 2l-2.3-.5a8.4 8.4 0 0 0-3.9 0l-2.3.5c-1.2.3-2.2-.8-2-2Z"/></svg>""",
+        "shield" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v6c0 5-3.3 8.2-8 9-4.7-.8-8-4-8-9V6l8-3Z"/><path d="m8.5 12 2.3 2.3 4.7-5"/></svg>""",
+        "users" => """<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 15.5A4.5 4.5 0 0 1 21 20"/></svg>""",
+        "clock" => """<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>""",
+        "services" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3Z"/></svg>""",
+        "surgery" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M14 5h5v5M5 14v5h5"/></svg>""",
+        "vaccine" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 3 5 5M14 5l5 5-9 9H5v-5l9-9ZM4 20h7"/></svg>""",
+        "grooming" => """<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="17.5" r="3"/><circle cx="17.5" cy="17.5" r="3"/><path d="m8.8 15.5 8-10.5M15.2 15.5 7.2 5"/></svg>""",
+        "diagnostics" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v10H4zM8 20h8M12 16v4M8 11h2l1.2-3 2.2 6L15 11h1"/></svg>""",
+        "dental" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3c2.4 0 2.8 1.2 5 1.2S14.6 3 17 3c2.5 0 4 2.2 3.3 5.5L18.5 17c-.5 2.4-2 4-3.5 4-1.2 0-1.2-4-3-4s-1.8 4-3 4c-1.5 0-3-1.6-3.5-4L3.7 8.5C3 5.2 4.5 3 7 3Z"/></svg>""",
+        "top" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>""",
+        "prev" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>""",
+        "next" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>""",
+        "copy" => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h11v13H8z"/><path d="M5 16H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v1"/></svg>""",
+        _ => """<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>"""
+    };
+
+    private sealed class VetFusionContent
+    {
+        public SeoContent Seo { get; set; } = new();
+        public ClinicContent Clinic { get; set; } = new();
+        public ImageContent Images { get; set; } = new();
+        public List<NavContent> Navigation { get; set; } = [];
+        public List<AnnouncementContent> Announcements { get; set; } = [];
+        public List<ServiceContent> Services { get; set; } = [];
+        public List<ReasonContent> Reasons { get; set; } = [];
+        public List<string> AppointmentOptions { get; set; } = [];
+        public List<GalleryContent> GalleryItems { get; set; } = [];
+        public static VetFusionContent Default => new();
+    }
+
+    private sealed class SeoContent
+    {
+        public string Title { get; set; } = "VetFusion Animal Clinic SJDM | Veterinary Care in San Jose del Monte";
+        public string Description { get; set; } = "VetFusion Animal Clinic SJDM Branch provides veterinary checkups, diagnostics, surgery inquiries, grooming, vaccination inquiries, and urgent call support in San Jose del Monte.";
+    }
+
+    private sealed class ClinicContent
+    {
+        public string Name { get; set; } = "VetFusion Animal Clinic";
+        public string Branch { get; set; } = "SJDM Branch";
+        public string Eyebrow { get; set; } = "VetFusion Animal Clinic - SJDM Branch";
+        public string HeroTitle { get; set; } = "Complete veterinary care when your pet needs it most";
+        public string HeroLead { get; set; } = "";
+        public string TrustText { get; set; } = "";
+        public string AboutText { get; set; } = "";
+        public List<string> TrustItems { get; set; } = [];
+        public string Phone { get; set; } = "0966 085 1536";
+        public string PhoneLink { get; set; } = "tel:+639660851536";
+        public string Email { get; set; } = "vetfusionanimalclinic@gmail.com";
+        public string MessengerUrl { get; set; } = "#contact";
+        public string FacebookUrl { get; set; } = "";
+        public string Address { get; set; } = "";
+        public string MapsUrl { get; set; } = "";
+        public string MapsEmbedUrl { get; set; } = "";
+        public string HoursLabel { get; set; } = "Call clinic for current hours";
+    }
+
+    private sealed class ImageContent
+    {
+        public string Logo { get; set; } = "images/vetfusion-logo.png";
+        public string Hero { get; set; } = "images/vetfusion-hero.webp";
+        public string Consultation { get; set; } = "images/vetfusion-consultation.webp";
+        public string Diagnostics { get; set; } = "images/vetfusion-diagnostics.webp";
+        public string Grooming { get; set; } = "images/vetfusion-grooming.webp";
+    }
+
+    private sealed class NavContent
+    {
+        public string Label { get; set; } = "";
+        public string Href { get; set; } = "";
+    }
+
+    private sealed class AnnouncementContent
+    {
+        public string Id { get; set; } = "";
+        public string Title { get; set; } = "";
+        public string ShortDescription { get; set; } = "";
+        public string FullDescription { get; set; } = "";
+        public string Category { get; set; } = "Advisory";
+        public string PublishDate { get; set; } = "";
+        public string EffectiveDate { get; set; } = "";
+        public string? ExpiryDate { get; set; }
+        public int Priority { get; set; }
+        public bool IsPinned { get; set; }
+        public string ImagePath { get; set; } = "images/vetfusion-consultation.webp";
+        public string ImageAlt { get; set; } = "VetFusion clinic update image";
+        public string ActionText { get; set; } = "Contact Clinic";
+        public string ActionUrl { get; set; } = "#contact";
+        public string CategoryClass => $"announcement--{Category.ToLowerInvariant()}";
+    }
+
+    private sealed class ServiceContent
+    {
+        public string Title { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Icon { get; set; } = "checkup";
+        public string Category { get; set; } = "";
+    }
+
+    private sealed class ReasonContent
+    {
+        public string Title { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Icon { get; set; } = "check";
+    }
+
+    private sealed class GalleryContent
+    {
+        public string Title { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Image { get; set; } = "";
+        public string Alt { get; set; } = "";
+    }
+}
