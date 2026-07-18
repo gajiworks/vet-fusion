@@ -21,7 +21,7 @@
 
 <div class="site-shell">
     <div class="header-strip">
-        <span>Animal Clinic &amp; Pet Grooming in San Jose del Monte</span>
+        <span>Animal Clinic &amp; Pet Care in San Jose del Monte</span>
     </div>
 
     <header class="site-header" data-site-header>
@@ -30,7 +30,7 @@
                 <img src="@Content.Images.Logo" alt="@Content.Clinic.Name @Content.Clinic.Branch logo" width="64" height="64" />
                 <span>
                     <strong>VetFusion</strong>
-                    <small>Animal Clinic and Pet Grooming</small>
+                    <small>Animal Clinic and Pet Care</small>
                 </span>
             </a>
 
@@ -71,7 +71,7 @@
                     }
                 </ul>
                 <div class="hero-stats" aria-label="Clinic quick details">
-                    <span>@((MarkupString)Icon("paw"))<strong>Pet Care</strong><small>Checkups, grooming, and urgent guidance</small></span>
+                    <span>@((MarkupString)Icon("paw"))<strong>Pet Care</strong><small>Checkups, wellness, and urgent guidance</small></span>
                     <span>@((MarkupString)Icon("shield"))<strong>Reliable Support</strong><small>Appointment requests with clinic confirmation</small></span>
                     <span>@((MarkupString)Icon("users"))<strong>Experienced Team</strong><small>Veterinary professionals ready to help</small></span>
                     <span>@((MarkupString)Icon("clock"))<strong>Clinic Hours</strong><small>@Content.Clinic.HoursLabel</small></span>
@@ -84,10 +84,11 @@
                 <div class="section-heading section-heading--split">
                     <div>
                         <p class="eyebrow">Services</p>
-                        <h2 id="services-title">Veterinary care made easier to request</h2>
+                        <h2 id="services-title">Veterinary Services for Every Stage of Your Pet's Life</h2>
                     </div>
+                    <p>From routine preventive care to emergency treatment and surgical procedures, VetFusion Animal Clinic is committed to providing compassionate, reliable, and professional veterinary care for your beloved pets.</p>
                 </div>
-                <div class="service-grid" id="services-list">
+                <div class="service-grid @(servicesExpanded ? "is-expanded" : null)" id="services-list">
                     @foreach (var service in VisibleServices)
                     {
                         <button class="service-card @(service.Category == "Emergency" ? "service-card--emergency" : null)" type="button" @onclick="() => OpenServiceModal(service)">
@@ -136,7 +137,7 @@
                     </button>
                 }
 
-                <div class="announcement-grid">
+                <div class="announcement-grid @(announcementsExpanded ? "is-expanded" : null)" id="announcements-list">
                     @foreach (var announcement in VisibleAnnouncements)
                     {
                         <button class="announcement-card @(announcement.CategoryClass)" type="button" @onclick="() => OpenAnnouncementModal(announcement)">
@@ -148,30 +149,24 @@
                         </button>
                     }
                 </div>
+                @if (RegularAnnouncements.Count() > MobileDefaultCardCount)
+                {
+                    <button class="button button--secondary section-toggle mobile-card-toggle" type="button" aria-expanded="@announcementsExpanded.ToString().ToLowerInvariant()" aria-controls="announcements-list" @onclick="ToggleAnnouncements">
+                        @((MarkupString)Icon(announcementsExpanded ? "top" : "next"))<span>@(announcementsExpanded ? "Show Less" : "Show More")</span>
+                    </button>
+                }
             </div>
         </section>
 
         <section class="section section--soft" id="about">
             <div class="container split-layout about-layout">
-                <div class="about-label">
-                    <p class="eyebrow">About VetFusion</p>
-                </div>
                 <figure class="section-photo">
                     <img src="@Content.Images.Consultation" alt="Veterinarian gently checking an orange cat while the owner watches" width="1600" height="900" loading="lazy" />
                 </figure>
                 <div class="about-copy">
+                    <p class="eyebrow">About VetFusion</p>
                     <h2>Compassionate veterinary care for every stage of your pet's life</h2>
-                    <p>@Content.Clinic.AboutText</p>
-                    <div class="trust-card-grid">
-                        @foreach (var reason in Content.Reasons)
-                        {
-                            <article class="trust-card">
-                                <span class="icon-badge" aria-hidden="true">@((MarkupString)Icon(reason.Icon))</span>
-                                <h3>@reason.Title</h3>
-                                <p>@reason.Description</p>
-                            </article>
-                        }
-                    </div>
+                    <p class="about-text">@Content.Clinic.AboutText</p>
                 </div>
             </div>
         </section>
@@ -184,7 +179,7 @@
                         <h2 id="gallery-title">A calmer look at clinic care</h2>
                     </div>
                 </div>
-                <div class="gallery-grid" data-gallery>
+                <div class="gallery-grid @(galleryExpanded ? "is-expanded" : null)" data-gallery id="gallery-list">
                     @for (var i = 0; i < Content.GalleryItems.Count; i++)
                     {
                         var item = Content.GalleryItems[i];
@@ -194,6 +189,12 @@
                         </button>
                     }
                 </div>
+                @if (Content.GalleryItems.Count > MobileDefaultCardCount)
+                {
+                    <button class="button button--secondary section-toggle mobile-card-toggle" type="button" aria-expanded="@galleryExpanded.ToString().ToLowerInvariant()" aria-controls="gallery-list" @onclick="ToggleGallery">
+                        @((MarkupString)Icon(galleryExpanded ? "top" : "next"))<span>@(galleryExpanded ? "Show Less" : "Show More")</span>
+                    </button>
+                }
             </div>
         </section>
 
@@ -414,8 +415,11 @@
 
 @code {
     private const int InitialServiceCount = 4;
+    private const int MobileDefaultCardCount = 3;
     private bool initialized;
     private bool servicesExpanded;
+    private bool announcementsExpanded;
+    private bool galleryExpanded;
     private DotNetObjectReference<Home>? pageReference;
     private ServiceContent? SelectedService { get; set; }
     private AnnouncementContent? SelectedAnnouncement { get; set; }
@@ -427,9 +431,12 @@
         .OrderByDescending(a => a.IsPinned)
         .ThenByDescending(a => a.Priority);
     private AnnouncementContent? PinnedAnnouncement => ActiveAnnouncements.FirstOrDefault(a => a.IsPinned);
-    private IEnumerable<AnnouncementContent> VisibleAnnouncements => ActiveAnnouncements.Where(a => a != PinnedAnnouncement).Take(6);
+    private IEnumerable<AnnouncementContent> RegularAnnouncements => ActiveAnnouncements.Where(a => a != PinnedAnnouncement);
+    private IEnumerable<AnnouncementContent> VisibleAnnouncements => RegularAnnouncements.Take(6);
 
     private void ToggleServices() => servicesExpanded = !servicesExpanded;
+    private void ToggleAnnouncements() => announcementsExpanded = !announcementsExpanded;
+    private void ToggleGallery() => galleryExpanded = !galleryExpanded;
     private void OpenServiceModal(ServiceContent service) => SelectedService = service;
     private void OpenAnnouncementModal(AnnouncementContent announcement) => SelectedAnnouncement = announcement;
     private void CloseModal()
@@ -548,7 +555,7 @@
     private sealed class SeoContent
     {
         public string Title { get; set; } = "VetFusion Animal Clinic SJDM | Veterinary Care in San Jose del Monte";
-        public string Description { get; set; } = "VetFusion Animal Clinic SJDM Branch provides veterinary checkups, diagnostics, surgery inquiries, grooming, vaccination inquiries, and urgent call support in San Jose del Monte.";
+        public string Description { get; set; } = "VetFusion Animal Clinic SJDM Branch provides veterinary checkups, diagnostics, surgery inquiries, pet care, vaccination inquiries, and urgent call support in San Jose del Monte.";
     }
 
     private sealed class ClinicContent

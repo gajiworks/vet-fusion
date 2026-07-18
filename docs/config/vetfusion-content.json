@@ -1,14 +1,14 @@
 {
   "seo": {
     "title": "VetFusion Animal Clinic SJDM | Veterinary Care in San Jose del Monte",
-    "description": "VetFusion Animal Clinic SJDM Branch provides veterinary checkups, diagnostics, surgery inquiries, grooming, vaccination inquiries, and urgent call support in San Jose del Monte."
+    "description": "VetFusion Animal Clinic SJDM Branch provides veterinary checkups, diagnostics, surgery inquiries, pet care, vaccination inquiries, and urgent call support in San Jose del Monte."
   },
   "clinic": {
     "name": "VetFusion Animal Clinic",
     "branch": "SJDM Branch",
     "eyebrow": "VetFusion Animal Clinic - SJDM Branch",
     "heroTitle": "Complete veterinary care when your pet needs it most",
-    "heroLead": "Routine checkups, diagnostics, surgery, grooming, and urgent veterinary support for pets in San Jose del Monte.",
+    "heroLead": "Routine checkups, diagnostics, surgery, preventive pet care, and urgent veterinary support for pets in San Jose del Monte.",
     "trustText": "Compassionate care, clear appointment guidance, and a convenient Gaya-Gaya location for local pet owners.",
     "aboutText": "VetFusion Animal Clinic supports pet owners in San Jose del Monte with practical veterinary guidance, clinic visits, appointment requests, and direct urgent-call support. Contact the clinic for the most current schedule and service availability.",
     "trustItems": [
@@ -91,70 +91,74 @@
       "actionUrl": "#contact"
     },
     {
-      "id": "grooming-availability",
-      "title": "Grooming schedule inquiries",
-      "shortDescription": "Contact the clinic to confirm current grooming availability and preferred schedule options.",
-      "fullDescription": "Grooming availability can vary by schedule. Use the appointment form or contact the clinic directly to ask for the latest slots.",
+      "id": "pet-care-guidance",
+      "title": "Pet care guidance inquiries",
+      "shortDescription": "Contact the clinic for wellness guidance, preventive care, and recommended next steps for your pet.",
+      "fullDescription": "For general pet care guidance, use the appointment form or contact the clinic directly with your pet's concern. The clinic can recommend the next appropriate consultation or care step.",
       "category": "Advisory",
-      "publishDate": "Grooming",
+      "publishDate": "Pet Care",
       "effectiveDate": "",
       "expiryDate": "",
       "priority": 1,
       "isPinned": false,
       "imagePath": "images/vetfusion-grooming.webp",
-      "imageAlt": "Small dog receiving gentle grooming in a clean clinic grooming area",
+      "imageAlt": "Happy small dog in a clean veterinary clinic care area",
       "actionText": "Request Appointment",
       "actionUrl": "#appointment"
+    },
+    {
+      "id": "diagnostics-consultation",
+      "title": "Diagnostic consultation requests",
+      "shortDescription": "For pets needing closer assessment, send a request or call the clinic for guidance.",
+      "fullDescription": "If your pet may need laboratory work or diagnostic evaluation, contact VetFusion Animal Clinic with your pet's symptoms and preferred schedule. The clinic team can guide you on the next appropriate step.",
+      "category": "Diagnostics",
+      "publishDate": "Clinic Services",
+      "effectiveDate": "",
+      "expiryDate": "",
+      "priority": 1,
+      "isPinned": false,
+      "imagePath": "images/vetfusion-diagnostics.webp",
+      "imageAlt": "Veterinary team using diagnostic equipment with a calm dog",
+      "actionText": "Contact Clinic",
+      "actionUrl": "#contact"
     }
   ],
   "services": [
     {
-      "title": "Emergency and Urgent Care",
-      "description": "Direct-call guidance for urgent pet concerns and next steps before arrival.",
+      "title": "Emergency Services",
+      "description": "Immediate veterinary care for urgent and emergency cases. Our team is ready to provide prompt medical attention when your pet needs it most.",
       "icon": "emergency",
       "category": "Emergency"
     },
     {
-      "title": "Routine Checkups",
-      "description": "General pet health visits, record review, and practical care guidance.",
+      "title": "Routine Checkup & Consultation",
+      "description": "Comprehensive health examinations, diagnosis, preventive care, and personalized treatment plans to help keep your pet healthy at every stage of life.",
       "icon": "checkup",
       "category": "Routine"
     },
     {
-      "title": "Vaccination",
-      "description": "Contact the clinic to ask about vaccine availability and appointment timing.",
+      "title": "Anti-Rabies Vaccination",
+      "description": "Protect your pet and your family with professionally administered anti-rabies vaccinations following recommended veterinary schedules.",
       "icon": "vaccine",
       "category": "Routine"
     },
     {
-      "title": "Surgery",
-      "description": "Request a consultation so the clinic can assess your pet and discuss appropriate care.",
-      "icon": "surgery",
-      "category": "Medical"
+      "title": "Deworming",
+      "description": "Routine deworming programs designed to prevent and treat internal parasites while supporting your pet's overall health.",
+      "icon": "services",
+      "category": "Routine"
     },
     {
-      "title": "Laboratory and Diagnostics",
-      "description": "Diagnostic inquiries and clinic evaluation for pets needing closer assessment.",
+      "title": "Ultrasound",
+      "description": "Advanced ultrasound imaging for pregnancy checks, internal examinations, and accurate diagnosis of various medical conditions.",
       "icon": "diagnostics",
       "category": "Medical"
     },
     {
-      "title": "Confinement",
-      "description": "Call or request guidance when your pet may need closer clinic observation.",
-      "icon": "services",
+      "title": "Surgical Procedures",
+      "description": "Safe and professional surgical procedures performed with proper patient monitoring and compassionate post-operative care.",
+      "icon": "surgery",
       "category": "Medical"
-    },
-    {
-      "title": "Dental Care",
-      "description": "Ask the clinic about dental concerns, checks, and service availability.",
-      "icon": "dental",
-      "category": "Routine"
-    },
-    {
-      "title": "Grooming",
-      "description": "Request grooming availability and schedule guidance for your pet.",
-      "icon": "grooming",
-      "category": "Grooming"
     }
   ],
   "reasons": [
@@ -186,7 +190,7 @@
     "Vaccination Inquiry",
     "Diagnostics Inquiry",
     "Dental Care Inquiry",
-    "Grooming Availability",
+    "Pet Care Guidance",
     "Other Veterinary Service"
   ],
   "galleryItems": [
@@ -209,10 +213,10 @@
       "alt": "Veterinary team using diagnostic equipment with a calm dog"
     },
     {
-      "title": "Grooming",
-      "description": "Grooming",
+      "title": "Pet Care",
+      "description": "Pet Care",
       "image": "images/vetfusion-grooming.webp",
-      "alt": "Happy small dog receiving gentle grooming"
+      "alt": "Happy small dog in a clean veterinary clinic care area"
     }
   ]
 }

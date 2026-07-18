@@ -327,6 +327,19 @@
     });
   }
 
+  function initializeMobileCardToggles() {
+    qsa("[data-mobile-card-toggle]").forEach(button => {
+      const target = qs(`#${button.getAttribute("data-mobile-card-toggle")}`);
+      if (!target) return;
+
+      button.addEventListener("click", () => {
+        const expanded = target.classList.toggle("is-expanded");
+        button.setAttribute("aria-expanded", String(expanded));
+        button.innerHTML = `${icon(expanded ? "top" : "next")}<span>${expanded ? "Show Less" : "Show More"}</span>`;
+      });
+    });
+  }
+
   async function initialize() {
     initializeHeader();
     initializeMenu();
@@ -339,6 +352,7 @@
     renderServices();
     initializeAnnouncementModals();
     initializeLightbox();
+    initializeMobileCardToggles();
   }
 
   document.addEventListener("DOMContentLoaded", () => {

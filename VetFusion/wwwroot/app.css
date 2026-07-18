@@ -37,6 +37,7 @@ body {
     background: var(--vf-background);
     color: var(--vf-text-dark);
     font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
     line-height: 1.6;
 }
 
@@ -169,7 +170,7 @@ svg {
 
 .brand strong {
     color: var(--vf-heading);
-    font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+    font-size: 1.5rem;
     font-weight: 900;
 }
 
@@ -177,7 +178,7 @@ svg {
     max-width: 320px;
     margin-top: 3px;
     color: #068a94;
-    font-size: clamp(.78rem, 1.1vw, .92rem);
+    font-size: .86rem;
     font-weight: 800;
 }
 
@@ -326,11 +327,15 @@ svg {
 }
 
 .section {
-    padding: clamp(48px, 5vw, 72px) 0;
+    padding: clamp(64px, 6.2vw, 92px) 0;
+}
+
+main > .section:not(.section--navy) {
+    border-top: 1px solid rgba(172, 205, 226, .78);
 }
 
 .section--soft {
-    background: var(--vf-blue-soft);
+    background: linear-gradient(180deg, #e6f3fb 0%, #f5fbfe 100%);
 }
 
 .section--navy {
@@ -341,6 +346,34 @@ svg {
 .section--navy h2,
 .section--navy p {
     color: #fff;
+}
+
+#services {
+    background:
+        radial-gradient(circle at 94% 8%, rgba(112, 177, 222, .28) 0 130px, transparent 132px),
+        linear-gradient(180deg, #e1f1fa 0%, #f4fbfe 100%);
+}
+
+#updates {
+    background:
+        linear-gradient(180deg, #ffffff 0%, #ecf5fb 100%);
+}
+
+#about {
+    background:
+        radial-gradient(circle at 8% 14%, rgba(55, 144, 202, .18) 0 110px, transparent 112px),
+        linear-gradient(180deg, #dff0f8 0%, #f2f9fd 100%);
+}
+
+#gallery {
+    background:
+        linear-gradient(180deg, #ffffff 0%, #e7f2f9 100%);
+}
+
+#contact {
+    background:
+        radial-gradient(circle at 92% 16%, rgba(18, 141, 148, .16) 0 120px, transparent 122px),
+        linear-gradient(180deg, #eaf6f9 0%, #ffffff 100%);
 }
 
 .hero {
@@ -424,7 +457,7 @@ h3 {
 
 h1 {
     max-width: 680px;
-    font-size: clamp(2.65rem, 5.2vw, 4.6rem);
+    font-size: 4.15rem;
 }
 
 h1 span {
@@ -435,13 +468,13 @@ h1 span {
     margin-top: 8px;
     color: #226dcc;
     font-family: "Segoe Script", "Bradley Hand ITC", "Brush Script MT", cursive;
-    font-size: clamp(1.9rem, 3.7vw, 3.2rem);
+    font-size: 2.95rem;
     font-weight: 500;
     line-height: .95;
 }
 
 h2 {
-    font-size: clamp(1.65rem, 3vw, 2.55rem);
+    font-size: 2.35rem;
 }
 
 h3 {
@@ -457,7 +490,7 @@ p {
     max-width: 560px;
     margin-top: 22px;
     color: #435673;
-    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    font-size: 1.12rem;
     line-height: 1.65;
 }
 
@@ -555,7 +588,7 @@ p {
 
 .hero-stats strong {
     color: var(--vf-heading);
-    font-size: clamp(.92rem, 1.25vw, 1.08rem);
+    font-size: 1rem;
     line-height: 1.15;
 }
 
@@ -610,7 +643,9 @@ p {
     gap: 18px;
 }
 
-.service-grid {
+.service-grid,
+.announcement-grid,
+.trust-card-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
@@ -712,6 +747,10 @@ p {
     margin: 26px auto 0;
 }
 
+.mobile-card-toggle {
+    display: none;
+}
+
 .featured-announcement {
     display: grid;
     appearance: none;
@@ -719,8 +758,8 @@ p {
     color: inherit;
     cursor: pointer;
     text-align: left;
-    grid-template-columns: minmax(0, 1fr) minmax(220px, .42fr);
-    gap: 20px;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, .4fr);
+    gap: clamp(18px, 3vw, 34px);
     align-items: center;
     margin-bottom: 18px;
     padding: clamp(20px, 3vw, 28px);
@@ -732,7 +771,7 @@ p {
 
 .featured-announcement h3 {
     margin-top: 14px;
-    font-size: clamp(1.25rem, 2.2vw, 1.8rem);
+    font-size: 1.55rem;
 }
 
 .featured-announcement p {
@@ -742,15 +781,11 @@ p {
 
 .featured-announcement img {
     width: 100%;
-    max-height: clamp(120px, 14vw, 150px);
+    height: clamp(150px, 18vw, 210px);
     aspect-ratio: 16 / 9;
     border-radius: 14px;
     object-fit: cover;
     object-position: center;
-}
-
-.announcement-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .announcement-card {
@@ -826,23 +861,29 @@ p {
 }
 
 .about-layout {
-    grid-template-areas:
-        "photo label"
-        "photo copy";
+    grid-template-columns: minmax(260px, .72fr) minmax(0, 1fr);
+    grid-template-areas: "photo copy";
     align-items: center;
-    row-gap: 10px;
-}
-
-.about-label {
-    grid-area: label;
-}
-
-.about-label .eyebrow {
-    margin-bottom: 0;
+    gap: clamp(34px, 6vw, 92px);
 }
 
 .about-copy {
     grid-area: copy;
+    max-width: 620px;
+}
+
+.about-copy .eyebrow {
+    margin-bottom: 14px;
+}
+
+.about-copy h2 {
+    max-width: 620px;
+}
+
+.about-text {
+    margin-top: 14px;
+    max-width: 620px;
+    line-height: 1.75;
 }
 
 .about-layout .section-photo {
@@ -850,7 +891,7 @@ p {
 }
 
 .section-photo {
-    width: min(100%, 400px);
+    width: min(100%, 420px);
     justify-self: center;
     margin: 0;
     overflow: hidden;
@@ -862,13 +903,13 @@ p {
 
 .section-photo img {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: clamp(280px, 28vw, 360px);
     object-fit: cover;
     object-position: center;
+    display: block;
 }
 
 .trust-card-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: 24px;
 }
 
@@ -1124,7 +1165,7 @@ p {
     align-items: center;
     column-gap: 10px;
     min-width: 0;
-    padding: 12px 0;
+    padding: 10px 0;
     border-bottom: 1px solid var(--vf-border);
 }
 
@@ -1156,7 +1197,7 @@ p {
 .contact-details small {
     grid-column: 2;
     color: var(--vf-muted);
-    font-size: .72rem;
+    font-size: .66rem;
     font-weight: 900;
     text-transform: uppercase;
 }
@@ -1166,6 +1207,7 @@ p {
     grid-column: 2;
     margin-top: 3px;
     color: var(--vf-heading);
+    font-size: .9rem;
     font-weight: 900;
 }
 
@@ -1311,7 +1353,7 @@ p {
 
 .footer-brand h2 {
     color: #fff;
-    font-size: clamp(1.25rem, 2vw, 1.65rem);
+    font-size: 1.45rem;
 }
 
 .footer-statement-grid {
@@ -1410,7 +1452,7 @@ p {
 .emergency-panel__card h2,
 .lightbox__panel h2 {
     color: var(--vf-heading);
-    font-size: clamp(1.1rem, 2.1vw, 1.55rem);
+    font-size: 1.35rem;
 }
 
 .content-modal header button,
@@ -1641,6 +1683,30 @@ p {
 }
 
 @media (max-width: 1120px) {
+    body {
+        font-size: 15.5px;
+    }
+
+    h1 {
+        font-size: 3.35rem;
+    }
+
+    h2 {
+        font-size: 2.1rem;
+    }
+
+    .hero-script {
+        font-size: 2.45rem;
+    }
+
+    .hero-lead {
+        font-size: 1.05rem;
+    }
+
+    .featured-announcement h3 {
+        font-size: 1.4rem;
+    }
+
     .primary-nav {
         gap: 10px;
     }
@@ -1659,13 +1725,32 @@ p {
 
     .about-layout {
         grid-template-areas:
-            "label"
+            "about-label"
             "photo"
-            "copy";
+            "about-title"
+            "about-text";
         row-gap: 18px;
     }
 
-.about-layout .section-photo {
+    .about-copy {
+        display: contents;
+    }
+
+    .about-copy .eyebrow {
+        grid-area: about-label;
+        margin-bottom: 0;
+    }
+
+    .about-copy h2 {
+        grid-area: about-title;
+    }
+
+    .about-text {
+        grid-area: about-text;
+        margin-top: 0;
+    }
+
+    .about-layout .section-photo {
         width: min(100%, 460px);
     }
 
@@ -1704,10 +1789,12 @@ p {
     }
 
     .section-photo img {
-        max-height: 260px;
+        height: clamp(260px, 44vw, 360px);
     }
 
     .service-grid,
+    .announcement-grid,
+    .trust-card-grid,
     .gallery-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1774,8 +1861,6 @@ p {
     }
 
     .featured-announcement,
-    .announcement-grid,
-    .trust-card-grid,
     .footer-statement-grid {
         grid-template-columns: 1fr;
     }
@@ -1800,6 +1885,10 @@ p {
 }
 
 @media (max-width: 680px) {
+    body {
+        font-size: 15px;
+    }
+
     .container {
         width: min(100% - 28px, var(--vf-max));
     }
@@ -1852,15 +1941,15 @@ p {
     }
 
     h1 {
-        font-size: clamp(2rem, 9vw, 2.7rem);
+        font-size: 2.35rem;
     }
 
     h2 {
-        font-size: clamp(1.6rem, 7.5vw, 2.2rem);
+        font-size: 1.85rem;
     }
 
     .section {
-        padding: 48px 0;
+        padding: 56px 0;
     }
 
     .hero {
@@ -1887,7 +1976,7 @@ p {
     }
 
     .hero-script {
-        font-size: clamp(1.7rem, 10vw, 2.45rem);
+        font-size: 2rem;
     }
 
     .hero-lead {
@@ -1908,7 +1997,8 @@ p {
     }
 
     .section-photo img {
-        max-height: 210px;
+        height: clamp(230px, 70vw, 310px);
+        max-height: none;
     }
 
     .featured-announcement img {
@@ -1929,10 +2019,25 @@ p {
     }
 
     .service-grid,
+    .announcement-grid,
+    .trust-card-grid,
     .gallery-grid,
     .appointment-form,
     .contact-details {
         grid-template-columns: 1fr;
+    }
+
+    .service-grid:not(.is-expanded) .service-card:nth-child(n + 4) {
+        display: none;
+    }
+
+    .announcement-grid:not(.is-expanded) .announcement-card:nth-child(n + 4),
+    .gallery-grid:not(.is-expanded) .gallery-item:nth-child(n + 4) {
+        display: none;
+    }
+
+    .mobile-card-toggle {
+        display: flex;
     }
 
     .trust-row {
